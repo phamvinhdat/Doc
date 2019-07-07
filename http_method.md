@@ -38,8 +38,6 @@
 
 ### Method
 
-> `HTTP`
-
 - GET
 
   > Dùng để lấy dữ liệu về từ `server`. Câu truy vấn sẽ được đính kèm vào đường dẫn `HTTP request`. `GET` chỉ dùng để lấy dữ liệu từ `server` và không sủa đổi theo bất kì cách nào (mặc dù hoàn toàn có thể làm được). Vì `GET requests` không làm thay đổi `state` của `resource` nên nó được coi là **`safe method`**. `GET APIs` cũng là **`idempotent`** nghĩa là thực hiện nhiều `request` giống nhau thì kết quả trả về luôn như nhau cho đến khi một `API` khác (`POST or PUT`) là thay đổi `state` của `resource`.
