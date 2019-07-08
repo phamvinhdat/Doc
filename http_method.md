@@ -104,9 +104,90 @@
     - HTTP DELETE `http://www.appdomain.com/users/123`
     - HTTP DELETE `http://www.appdomain.com/users/123/accounts/456`
 
+- HEAD
+  - Về cơ bản, HEAD giống hệt như GET trừ việc nó không gửi dữ liệu trong response. Nói cách khác, HEAD response chỉ trả về header.
+  - Method này có thể được sử dụng để nhận về các metadata của API được chọn mà không cần trả về dữ liệu. Vì vậy, chúng thường được sử dụng để kiểm tra môt URI xem còn hiệu lực hay không, còn truy cập được hay không hoặc có thay đổi nào hay không.
+  - Ví dụ:
+      - `curl -X HEAD https://example.org -i`
+      ```
+      ```
+- `PATCH` 
+  - `PATCH` một phần tuongw tự như PUT, dùng để thay đổi resource ở phía server. Tuy nhiên, thay vì thay đổi toàn bộ resource, `PATCH` thay đổi một phần (partial) resource trên server.
+  - Một số thuộc tính của PATCH:
+
+  Property | Value
+  ---------|--------
+  Request has body | YES 
+  Successful response has body | YES
+  
+- `OPTIONS`
+  - HTTP `OPTIONS` method được sử dụng để mô tả những method có thể được dùng cho resource. Client có thể chỉ ra URL cho `OPTIONS` hoặc dùng dấu * cho toàn bộ server.
+  - Ví dụ:
+    - `curl -X OPTIONS https://example.org -i `
+    ```
+    HTTP/2 200
+    allow: `OPTIONS`, GET, HEAD, POST
+    cache-control: max-age=604800
+    content-type: text/html; charset=UTF-8
+    date: Mon, 08 Jul 2019 04:37:14 GMT
+    expires: Mon, 15 Jul 2019 04:37:14 GMT
+    server: EOS (vny006/0450)
+    content-length: 0
+    ```
+
+- Response status code
+  1. 1xx Informational response
+    
+      Code | Name | Description
+      ------|-----|------------
+      100 | Continue | Server gửi mã code này để thông báo đồng thuận cho client gửi tiếp request body, ví dụ như body của POST.
+
+  2. 2xx Success
+  
+      Code | Name | Description
+      ------|-----|------------
+      200 | OK | Response tiêu chuẩn cho một HTTP request thành công.Response thực sự sẽ tuỳ thuộc vào request. Nếu response cho một GET request, response sẽ chứa đối tượng tương ứng với request, còn trong POST request, response sẽ chứa đối tượng hoặc kết quả của request.
+      201 | Created | Request đã hoàn thành, tạo mới resource thành công.
+      202 | Accepted | Yêu cầu được chấp nhận xử lý nhưng có thể chưa hoàn thành, request có thể được xử lý hoặc không và có thể không cho phép khi đang xử lý.
+      203 | Non-Authoritative Information (since HTTP/1.1) | Server đóng vai trò là một proxy nhận response 200 OK từ server gốc nhưng trả về một phiên bản đã có thay đổi.
+      204 | No Content | Server hoàn thành xử lý request nhưng không trả về dữ liệu gì cả.
+      205 | Reset Content | Server xử lý process thành công nhưng không trả về dữ liệu. Tuy nhiên, khác biệt với 204 No Content là 205 Reset Content  yêu cầu  client refresh trang xem thông tin.
+
+  3. 3xx Redirection
+
+      Code | Name | Description
+      ------|-----|------------
+      300 | Multiple Choices | Đưa ra nhiều tuỳ chọn cho resource mà client có thể chọn.
+      301 | Moved Permanently | Request được thực hiện và những request sau đó đến URI này đề được chuyển hướng do trình duyệt cache lại status.
+      302 | Found (Previously "Moved temporarily") | Thông báo cho client redirect đến một URL khác.
+      303 | See Other (since HTTP/1.1) | Response trả về có thể được tìm thấy ở một URI khác thông qua GET method. Khi nhận được response sau khi gửi POST(PUT/DELETE), client giả định là request đã được thực hiện và thực hiện một GET request khác đến URI được trả về.
+      307 | Temporary Redirect (since HTTP/1.1) | Request sẽ được lặp lại với một URI khác. Tuy nhiên, request method sẽ không thay đổi. Ví dụ một POST request sẽ được redirect sang một POST request khác.
+      308 | Permanent Redirect (RFC 7538) | Tương tự 301 nhưng không thay đổi method giống 307.
+
+  4. 4xx Client Errors
+
+      Code | Name | Description
+      ------|-----|------------
+      400 | Bad Request | Server không xử lý request do lỗi của client. Ví dụ như URI quá dài, sai cú pháp, ...
+      401 | Unauthorized (RFC 7235) | Giống với 403 Forbidden, đặc biệt được sử dụng khi authentication được yêu cầu và thất bại hoặc không được cung cấp.
+      403 | Forbidden | Client gửi một request hợp lệ, nhưng server từ chối thực hiện. Nguời dùng không đủ quyền thực hiện request.
+      404 | Not Found | Resource client cần không có sẵn tuy nhiên sẽ có thể có trong tương lai. Những request sau này vẫn được chấp nhận.
+      408 | Request Timeout | Server đợi quá lâu cho request từ client.
+
+  5. 5xx Server Error
+
+       Code | Name | Description
+      ------|-----|------------
+      500 | Internal Server Error | Thông báo chung khi server gặp lỗi không mong muốn.
+      501 | Not Implemented | Server không nhận ra được request hoặc chưa implement request đó.
+      502 | Bad Gateway | Server đóng vai trò gateway hoặc proxy nhận được response không hợp lệ từ server.
+      503 | Service Unavailable | Server không thể xử lý request do quá tải hoặc đang bảo trì. Thông thường, đây là trạng thái tạm thời.
+      504 | Gateway Timeout | Server đóng vai trò gateway hoặc proxy không nhận được response kịp lúc từ server.
 ## Reference
 1. [https://medium.com/extend/what-is-rest-a-simple-explanation-for-beginners-part-2-rest-constraints-129a4b69a582](https://medium.com/extend/what-is-rest-a-simple-explanation-for-beginners-part-2-rest-constraints-129a4b69a582)
 1. [https://restfulapi.net/http-methods/](https://restfulapi.net/http-methods/)
 1. [https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods)
 1. [https://restfulapi.net/rest-put-vs-post/](https://restfulapi.net/rest-put-vs-post/)
 1. [https://restfulapi.net/idempotent-rest-apis/](https://restfulapi.net/idempotent-rest-apis/)
+1. [rfc7231](https://tools.ietf.org/html/rfc7231#section-4.3)
+1. [https://en.wikipedia.org/wiki/List_of_HTTP_status_codes](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes)
